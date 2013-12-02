@@ -1,0 +1,36 @@
+{
+  "private": false,
+  "name": "cgminer-rake",
+  "version": "0.0.1",
+  "author": "Jordan Marinov <jaisor@gmail.com>",
+  "description": "Node.js visualizer for cgminer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaisor/cgminer-rake.git"
+  },
+  "main": "index",
+  "bin": {
+  },
+  "scripts": {
+    "prepublish": "npm prune"
+  },
+  "keywords": [
+    "cgminer",
+    "btc",
+    "bitcoin",
+    "mining"
+  ],
+  "dependencies" : {
+    "express" : "3.3.3",
+    "consolidate" : "0.9.1",
+    "commander": "1.2.0",
+    "merge": "1.1.1",
+    "hogan.js": "2.0.0",
+    "cradle": "0.6.6",
+    "cgminer": "0.1.0",
+    "better-require": "0.0.3"
+  },
+  "engines": {
+    "node": ">=0.6"
+  }
+}
