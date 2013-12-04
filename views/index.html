@@ -15,60 +15,75 @@
       }
     </style>
     <link href="/public/css/bootstrap-responsive.css" rel="stylesheet">
-
-    <!-- Fav and touch icons -->
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/public/ico/apple-touch-icon-114-precomposed.png">
-      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/public/ico/apple-touch-icon-72-precomposed.png">
-                    <link rel="apple-touch-icon-precomposed" href="/public/ico/apple-touch-icon-57-precomposed.png">
-                                   <link rel="shortcut icon" href="/public/ico/favicon.png">
   </head>
 
   <body>
 
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="brand" href="#">CGMiner Rake</a>
-          <div class="nav-collapse collapse">
-            <ul class="nav">
-              {{#config}}
-                <li class="navbar-text"><small>(cgminer @ <strong>{{cg_host}}</strong> : <strong>{{cg_port}})</strong></small></li>
-              {{/config}}
-            </ul>
-          </div>
+          <a class="navbar-brand" href="#">CGMiner Rake</a>
         </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Devices</a></li>
+            <li><a href="#about">Pools</a></li>
+          </ul>
+          <p class="navbar-text navbar-right" style="font-size: 9px;">
+            BTC: 1CnLshw9o3vHqJZJWzC48ebjNeLXq13MLM; LTC: Lc2ZN8UFZKcSycASZ5vpR47Wj675GCpWPG
+          </p>
+        </div><!--/.nav-collapse -->
       </div>
     </div>
 
-    <div class="container row-fluid">
+    <div class="container">
 
-      <h1>Devices</h1>
-      <div id="devices"></div>
+      <div class="jumbotron" id="summary">
+      </div>
+
+      <div class="page-header">
+        <h1>Devices</h1>
+      </div>
+      <p id="devices">
+      </p>
 
     </div> <!-- /container -->
+
+    <script type="text" id="summary-tpl" src="/public/tpl/summary.tpl.html"></script>
 
     <script type="text/javascript" src="/public/js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="/public/js/bootstrap.js"></script>
     <script type="text/javascript" src="/public/js/highcharts.js"></script>
     <script type="text/javascript" src="/public/js/highcharts-more.js"></script>
+    <script type="text/javascript" src="/public/js/prettyprint.js"></script>
+    <script type="text/javascript" src="/public/js/renders.js"></script>
 
     <script type="text/javascript">
+
       $(function () {
 
         var interval = 2000;
 
         setInterval(function() {
-          $.get('devices.json', function(data) {
-            
-            $("#devices").html(JSON.stringify(data));
 
+          $.get('summary.json', function(data) {
+            $("#summary").html(renderSummary(data));
           });
+
+          $.get('devices.json', function(data) {
+            var devicesHtml = "";
+            $.each(data, function( index, value ) {
+              //devicesHtml += prettyPrint(value);
+            });
+            $("#devices").html(prettyPrint(data));
+          });
+
         }, interval);
 
       });
