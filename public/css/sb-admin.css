@@ -53,12 +53,13 @@ body {
 /* Nav Announcements */
 
 .announcement-heading {
-  font-size: 50px;
+  font-size: 40px;
   margin: 0;
 }
 
 .announcement-text {
   margin: 0;
+  white-space: nowrap;
 }
 
 /* Table Headers */
