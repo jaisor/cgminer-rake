@@ -8,12 +8,12 @@ var program = require('commander'),
 program
   .version(version)
   .option('-p, --port <port>', 'specify the port for the rake webserver [80]', Number, 80)
-  .option('-s, --cgminer-host <cg_hostname>', 'specify the hostname for the chminer api [localhost]', String, "localhost")
-  .option('-o, --cgminer-port <cg_port>', 'specify the port for the cgminer api [4028]', Number, 4028)
+  .option('-s, --cgminer-host <cgminer-host>', 'specify the hostname for the chminer api [localhost]', String, "localhost")
+  .option('-o, --cgminer-port <cgminer-port>', 'specify the port for the cgminer api [4028]', Number, 4028)
   .parse(process.argv);
 
 var cgrake = new CGRake({
-        port: program.port,
-        cg_host: program.cg_hostname,
-    	cg_port: program.cg_port,
+      port: program.port,
+      cg_host: program.cgminerHost,
+      cg_port: program.cgminerPort
     });
