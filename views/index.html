@@ -204,28 +204,25 @@
 
       $(function () {
 
-        var interval = 2000;
-
+        var interval = 5000;
         var summarySpeedContainer = $("#flot-chart-summary-speed");
-        var summarySpeedData = [];
-        var summarySpeedDataMin = Number.MAX_VALUE, summarySpeedDataMax = Number.MIN_VALUE;
 
         //
 
         function renderSummary(data) {
-          $("#cg-version").html(data.STATUS[0].Description);
-          $("#summary-speed").html(Math.round(data.SUMMARY[0]["MHS 5s"]));
-          $("#summary-accepted").html(data.SUMMARY[0]["Accepted"]);
-          $("#summary-rejected").html(data.SUMMARY[0]["Rejected"]);
-          $("#summary-hardware").html(data.SUMMARY[0]["Hardware Errors"]);
-          $("#summary-raw").text(JSON.stringify(data, null, 4));
+          $("#summary-raw").text(JSON.stringify(data.raw, null, 4));
+          $("#cg-version").html(data.version);
+          $("#summary-speed").html(Math.round(data.mhs));
+          $("#summary-accepted").html(data.accepted);
+          $("#summary-rejected").html(data.rejected);
+          $("#summary-hardware").html(data.hardwareErrors);
         }            
 
         function readCgMiner() {
           $.get('summary.json', function(data) {
             renderSummary(data);
-            updateSummarySpeedData(data.SUMMARY[0]["MHS 5s"]);
-            updateSummarySharesPie(data.SUMMARY[0]["Accepted"], data.SUMMARY[0]["Rejected"], data.SUMMARY[0]["Hardware Errors"]);
+            updateSummarySpeedData(data.speedHistory);
+            updateSummarySharesPie(data.accepted, data.rejected, data.hardwareErrors);
           });
 
           $.get('devices.json', function(data) {
@@ -238,31 +235,29 @@
           });
         }
 
-        function updateSummarySpeedData(value) {
+        function updateSummarySpeedData(history) {
 
-          var maximum = summarySpeedContainer.outerWidth() / 2 || 300;
-          var summarySpeedPlot;
+          var min=Number.MAX_VALUE, max=Number.MIN_VALUE, delta;
 
-          if (value < summarySpeedDataMin) {
-            summarySpeedDataMin = value;
+          if (!history.length) {
+            // Nothing to do
+            return;
           }
 
-          if (value > summarySpeedDataMax) {
-            summarySpeedDataMax = value;
+          console.log(history.length);
+
+          for(var i=0; i<history.length; i++) {
+            var value = history[i][1];
+            if (value < min) {
+              min = value;
+            }
+            if (value > max) {
+              max = value;
+            }
           }
 
-          // if (summarySpeedData.length > maximum) {
-          //     summarySpeedData = summarySpeedData.slice(1);
-          // }
-
-          while (summarySpeedData.length < maximum) {
-              summarySpeedData.push([summarySpeedData.length, 0]);
-          }
-
-          summarySpeedData.push([summarySpeedData.length, value]);
-
-          summarySpeedPlot = $.plot(summarySpeedContainer, [{
-            data: summarySpeedData,
+          $.plot(summarySpeedContainer, [{
+            data: history,
             lines: {
               fill: true
             }
@@ -291,18 +286,17 @@
             xaxis: {
               tickFormatter: function() {
                 return "";
-              }
+              },
+              min: history[0][0]
             },
             yaxis: {
               min: 0,
-              max: summarySpeedDataMax + (summarySpeedDataMax - summarySpeedDataMin) * 0.1
+              max: max + (max-min)*0.2
             },
             legend: {
               show: true
             }
-          });
-
-          summarySpeedPlot.draw();
+          }).draw();
         }
 
         function updateSummarySharesPie(accepted, rejected, hardware) {
